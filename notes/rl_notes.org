@@ -1,0 +1,103 @@
+* Deep reinforcement learning
+** Core features
+*** enviroment
+    enviroment the agent lives in
+*** agent
+    agent that is inside the enviroment, executing an action for a given state
+*** reward
+    reward for executing action or consequence
+*** state
+    state of the agent in the environment
+*** action
+    action that can be executed in this enviroment
+** Functions
+*** Policy function
+    rule used by an agent to decide the action to take in a given state
+*** Trajectory 
+    tuple of states and actions that were executed in that state
+*** Value function
+    value of state action pair
+** Model free vs. Model based
+   model of the the environment: function that predicts state transition and reward
+   
+   Main advantage of having a model is that it allows the agent to plan by thinking ahead
+   and seeing what would happen. 
+
+*** Model based 
+    ADVANTAGES: 
+    can explicitly decide between the available options using a planning ahead. 
+    This can also be done using the policy (to find a path in the available options). 
+
+    DISADVANTAGES: 
+    The main disadvantage is that the ground truth is almost never available
+    the model often has to be learned from experience, ofcourse here a bias can 
+    arise which can be exploited by the agent (failing to generalise to actual
+    new enviroments).
+
+    I think this can be thought of as like having an avaible tree like structure that
+    allows you to go deep and backtrack and observe what the possibilities are. 
+    However, if the branching factor is high this doesn't really help, I believe
+    this is where the policy comes in. 
+*** Model free
+    don't have these same advantages but 
+** Learning
+   what to learn depends on whether a model is used or note
+*** Model free RL
+**** Policy optimisation
+     These represent the policy explicitely \pi_\theta(a|s). This is almost always
+     performed on policy which means that policy is learned using the new data
+     
+     This technique also often involves the learning of an approximator for the 
+     on-policy value function V^\pi(s) this helps to figure out how to update the
+     policy
+**** Q-learning
+     Learn the approximator Q_\theta(s,a), often makes use of an objective function
+     based on the bellman equation. The is usually performed off-policy, this means
+     that each update can use data collected at any point during training. 
+**** Comparison
+     the nice thing about policy optimisation is that you directly optimise for the
+     thing you want to know, this tends to make it very stable. Q-learning only 
+     indirectly optimises for agent performance this tends to be less stable. 
+     However, the advantage of Q-learning is that they can use all the data so 
+     they are more effective.
+
+     there are also hybrid techniques between policy optimisation and Q-learning. 
+*** Model-based RL
+    In this case there are many different ways in which a model van be used, these
+    are just some examples.
+**** Background: Pure planning
+     never explicityly represents the policy, rather, uses planning techniques. 
+     It computes a plan which is optimal with respect to the model. Where the 
+     plan describes all actions for a certain depth. 
+**** Expert Iteration
+     follow-on to pure planning, involves the learning and explicit representation 
+     of the policy. the agent uses a planning algorithm in the model. Generating
+     candidate actions for the plan by sampling its current policy. 
+
+     It can thus be seen as an expert relative to the policy.
+**** Embedding planning loops into policies
+     Another approach embeds the planning procedure directly in a policy as a 
+     subroutine. The policy can then learn to choose how and when the plans can be 
+     used. This makes model bias less of a problem.
+** Policy Optimisation
+   policy gradient: this is the gradient of the policy \nabla _\theta J(\pi _theta), 
+   used for the update of the policy gradient. 
+   $$
+   \theta_{k+1} = \theta + \alpha \nabla_{\theta} J(\pi_\theta) 
+   $$
+
+   the algorithm itself is referred to as policy gradient algorithm.
+*** Simple policy gradient
+    The goal is to choose a policy which maximises the return. Policy gradient
+    is computed in two steps 
+    1. analytical gradient of the policy performance
+    2. forming a sample estimate of that expected value
+
+    In order to optimise we make use of a loss function, this is however not a
+    loss function like the loss function we're used to. It is not defined on a 
+    fixed data that is independent of the parameters we are optimising for. Secondly
+    it doesn't measure performance, the performance we wish to know is dependent 
+    on the current policy, it thus does not guarantee that its improving the expected
+    return.
+
+    You thus shouldn't interpret it as decreasing loss is good. 
